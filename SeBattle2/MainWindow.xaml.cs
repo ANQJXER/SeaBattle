@@ -105,6 +105,7 @@ namespace SeBattle2
 
                    
                     this.KeyDown += OnKeyDown; // Add event handler for arrow key presses
+                    UpdateLabelAndRadioButton(MediumShipLabel, MediumShipCheckBox);
                 }
             }
 
@@ -121,6 +122,7 @@ namespace SeBattle2
 
 
                     this.KeyDown += OnKeyDown; // Add event handler for arrow key presses
+                    UpdateLabelAndRadioButton(LargeShipLabel, LargeShipCheckBox);
                 }
                 
             }
@@ -306,10 +308,7 @@ namespace SeBattle2
 
         private bool IsFreeArea(int startX, int startY, int endX, int endY)
         {
-            int minX = Math.Max(0, startX);
-            int minY = Math.Max(0, startY);
-            int maxX = Math.Min(9, endX);
-            int maxY = Math.Min(9, endY);
+            int minX = Math.Max(0, startX - 1); int minY = Math.Max(0, startY - 1); int maxX = Math.Min(9, endX + 1); int maxY = Math.Min(9, endY + 1);
 
             for (int x = minX; x <= maxX; x++)
             {
