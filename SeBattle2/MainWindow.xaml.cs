@@ -1,26 +1,11 @@
-﻿using SeBattle2;
-using System.Security.Policy;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media.Imaging;
-using System.Windows.Media;
-using System.Windows;
-
-
-
-
-
-﻿using System.Collections.ObjectModel;
-using System.Text;
+﻿using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using SeBattle2.Logic;
+using SeBattle2.Models;
 
 namespace SeBattle2
 {
@@ -32,13 +17,15 @@ namespace SeBattle2
         const int MediumSize = 2;
         const int LargeSize = 3;
         const int ExtraLargeSize = 4;
-        private Button[,] _cells = new Button[10, 10];
+        private readonly Button[,] _cells = new Button[10, 10];
 
         private bool _isPlacingShipMode = false;
         private int _placingShipX;
         private int _placingShipY;
-        private AllowedDirections _placingDirections = AllowedDirections.None;
+        private List<ShipDirection> _placingDirections = new List<ShipDirection>();
         private Button _initialPlacementCell = null; // Add this field at the class level
+
+        private readonly ShipPlacementChecker _shipPlacementChecker;
 
         public MainWindow()
         {
@@ -73,6 +60,8 @@ namespace SeBattle2
                     Grid.SetColumn(cellButton, col);
                 }
             }
+
+            _shipPlacementChecker = new ShipPlacementChecker(_cells);
         }
 
         private void CellButton_MouseEnter(object sender, MouseEventArgs e)
@@ -96,116 +85,26 @@ namespace SeBattle2
 
             var button = sender as Button;
             var cellInfo = (CellInfo)button.Tag;
-
-            if (cellInfo.HasShip)
-            {
-                return; // Do nothing if the cell already has a ship
-            }
-
             int x = cellInfo.Column;
             int y = cellInfo.Row;
-            _placingDirections = AllowedDirections.None;
 
-            if (SmallShipCheckBox.IsChecked == true)
+            int shipSize = GetCurrentPlacingShipSize();
+            var checkResult = _shipPlacementChecker.Check(x, y, shipSize);
+            _placingDirections = checkResult.AllowedDirections;
+
+            //1
+            if (SmallShipCheckBox.IsChecked == true && checkResult.Allowed)
             {
-                if (IsFreeArea(x - 1, y - 1, x + 1, y + 1))
-                {
-                    PlaceShip(button);
-                    UpdateLabelAndRadioButton();
-                }
+                PlaceShip(button);
+                UpdateLabelAndRadioButton();
             }
-            else if (MediumShipCheckBox.IsChecked == true)
+            //multi unit ship
+            else if (shipSize > 1 && _placingDirections.Any())
             {
-                //left
-                if (IsFreeArea(x - 2, y - 1, x + 1, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, MediumSize, ShipDirection.Left);
-                    _placingDirections = AllowedDirections.Left;
-                }
-
-                //right
-                if (IsFreeArea(x - 1, y - 1, x + 2, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, MediumSize, ShipDirection.Right);
-                    _placingDirections |= AllowedDirections.Right;
-                }
-
-                //up
-                if (IsFreeArea(x - 1, y - 2, x + 1, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, MediumSize, ShipDirection.Up);
-                    _placingDirections |= AllowedDirections.Up;
-                }
-
-                //down
-                if (IsFreeArea(x - 1, y - 1, x + 1, y + 2))
-                {
-                    DisplayAllowedDirection(x, y, MediumSize, ShipDirection.Down);
-                    _placingDirections |= AllowedDirections.Down;
-                }
-            }
-            else if (LargeShipCheckBox.IsChecked == true)
-            {
-                //left
-                if (IsFreeArea(x - 3, y - 1, x + 1, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, LargeSize, ShipDirection.Left);
-                    _placingDirections = AllowedDirections.Left;
-                }
-
-                //right
-                if (IsFreeArea(x - 1, y - 1, x + 3, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, LargeSize, ShipDirection.Right);
-                    _placingDirections |= AllowedDirections.Right;
-                }
-
-                //up
-                if (IsFreeArea(x - 1, y - 3, x + 1, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, LargeSize, ShipDirection.Up);
-                    _placingDirections |= AllowedDirections.Up;
-                }
-
-                //down
-                if (IsFreeArea(x - 1, y - 1, x + 1, y + 3))
-                {
-                    DisplayAllowedDirection(x, y, LargeSize, ShipDirection.Down);
-                    _placingDirections |= AllowedDirections.Down;
-                }
-            }
-            else if (ExtraLargeShipCheckBox.IsChecked == true)
-            {
-                //left
-                if (IsFreeArea(x - 4, y - 1, x + 1, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, ExtraLargeSize, ShipDirection.Left);
-                    _placingDirections = AllowedDirections.Left;
-                }
-
-                //right
-                if (IsFreeArea(x - 1, y - 1, x + 4, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, ExtraLargeSize, ShipDirection.Right);
-                    _placingDirections |= AllowedDirections.Right;
-                }
-
-                //up
-                if (IsFreeArea(x - 1, y - 4, x + 1, y + 1))
-                {
-                    DisplayAllowedDirection(x, y, ExtraLargeSize, ShipDirection.Up);
-                    _placingDirections |= AllowedDirections.Up;
-                }
-
-                //down
-                if (IsFreeArea(x - 1, y - 1, x + 1, y + 4))
-                {
-                    DisplayAllowedDirection(x, y, ExtraLargeSize, ShipDirection.Down);
-                    _placingDirections |= AllowedDirections.Down;
-                }
+                _placingDirections.ForEach(direction => DisplayAllowedDirection(x, y, shipSize, direction));
             }
 
-            if (ThereIsAllowedDirection())
+            if (_placingDirections.Any())
             {
                 _isPlacingShipMode = true;
                 _placingShipX = x;
@@ -213,31 +112,6 @@ namespace SeBattle2
                 _initialPlacementCell = button; // Store the initial cell
             }
         }
-
-        private bool ThereIsAllowedDirection()
-        {
-            return
-                _placingDirections.HasFlag(AllowedDirections.Left) ||
-                _placingDirections.HasFlag(AllowedDirections.Right) ||
-                _placingDirections.HasFlag(AllowedDirections.Up) ||
-                _placingDirections.HasFlag(AllowedDirections.Down);
-        }
-
-        /*
-         * 
-         * okeay we knwo in what directions we can plac ship
-         * BUT
-         * how do we display for user direction to chose
-         * 
-         * options:
-         * 1) dispay kind of arrows 
-         *  we display arrows in alloed directions, when user select one of it ship would be placed
-         *      how user select arrow:
-         *          by mouse click, hard
-         *          by navigation arrows, up, down, left, rifght easy, becaus we can easily track what key was pressed by users
-         *  2) do not dispaly allowed directions
-         *  when user moves moouse to desired direction we either just put ship or just do nothing
-         * */
 
         private void DisplayAllowedDirection(int x, int y, int shipLegth, ShipDirection direction)
         {
@@ -306,43 +180,6 @@ namespace SeBattle2
             shipCheckBox.IsEnabled = true;
         }
 
-        bool IsFreeArea(int startX, int startY, int endX, int endY)
-        {
-            //actual ship location
-            for (int x = startX + 1; x <= endX - 1; x++)
-            {
-                for (int y = startY + 1; y <= endY - 1; y++)
-                {
-                    int rowIndex = y;
-                    int colIndex = x;
-
-                    if (!IsValidCellCoordinate(x)
-                        || !IsValidCellCoordinate(y)
-                        || HasCellShip(rowIndex, colIndex))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            for (int x = startX; x <= endX; x++)
-            {
-                for (int y = startY; y <= endY; y++)
-                {
-                    int rowIndex = y;
-                    int colIndex = x;
-
-                    if (IsValidCellCoordinate(x)
-                        && IsValidCellCoordinate(y)
-                        && HasCellShip(rowIndex, colIndex))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
 
         bool IsValidCellCoordinate(int coordinate)
         {
@@ -367,25 +204,25 @@ namespace SeBattle2
             switch (e.Key)
             {
                 case Key.Left:
-                    if (_placingDirections.HasFlag(AllowedDirections.Left))
+                    if (_placingDirections.Contains(ShipDirection.Left))
                     {
                         PlaceShipInDirection(ShipDirection.Left);
                     }
                     break;
                 case Key.Right:
-                    if (_placingDirections.HasFlag(AllowedDirections.Right))
+                    if (_placingDirections.Contains(ShipDirection.Right))
                     {
                         PlaceShipInDirection(ShipDirection.Right);
                     }
                     break;
                 case Key.Up:
-                    if (_placingDirections.HasFlag(AllowedDirections.Up))
+                    if (_placingDirections.Contains(ShipDirection.Up))
                     {
                         PlaceShipInDirection(ShipDirection.Up);
                     }
                     break;
                 case Key.Down:
-                    if (_placingDirections.HasFlag(AllowedDirections.Down))
+                    if (_placingDirections.Contains(ShipDirection.Down))
                     {
                         PlaceShipInDirection(ShipDirection.Down);
                     }
@@ -464,23 +301,23 @@ namespace SeBattle2
         {
             if (ExtraLargeShipCheckBox.IsChecked == true)
             {
-                return 4;
+                return ExtraLargeSize;
             }
 
             if (LargeShipCheckBox.IsChecked == true)
             {
-                return 3;
+                return LargeSize;
             }
 
             if (MediumShipCheckBox.IsChecked == true)
             {
-                return 2;
+                return MediumSize;
             }
 
             return 1;
         }
 
-       
+
         private void UpdateLabelAndRadioButton()
         {
             if (ExtraLargeShipCheckBox.IsChecked == true)
@@ -509,28 +346,16 @@ namespace SeBattle2
             // Store current ship size before any radio buttons are changed
             int currentShipSize = GetCurrentPlacingShipSize();
 
-            if (selectedDirection != ShipDirection.Left && _placingDirections.HasFlag(AllowedDirections.Left))
+            _placingDirections.ForEach(direction =>
             {
-                RemoveArrowsForDirection(ShipDirection.Left, currentShipSize);
-            }
-
-            if (selectedDirection != ShipDirection.Right && _placingDirections.HasFlag(AllowedDirections.Right))
-            {
-                RemoveArrowsForDirection(ShipDirection.Right, currentShipSize);
-            }
-
-            if (selectedDirection != ShipDirection.Up && _placingDirections.HasFlag(AllowedDirections.Up))
-            {
-                RemoveArrowsForDirection(ShipDirection.Up, currentShipSize);
-            }
-
-            if (selectedDirection != ShipDirection.Down && _placingDirections.HasFlag(AllowedDirections.Down))
-            {
-                RemoveArrowsForDirection(ShipDirection.Down, currentShipSize);
-            }
+                if (selectedDirection != direction)
+                {
+                    RemoveArrowsForDirection(direction, currentShipSize);
+                }
+            });
 
             // Reset placing directions
-            _placingDirections = AllowedDirections.None;
+            _placingDirections = new List<ShipDirection>();
         }
 
         private void RemoveArrowsForDirection(ShipDirection direction, int shipSize)
@@ -620,33 +445,13 @@ namespace SeBattle2
 
         private void StartBattleButton_Click(object sender, RoutedEventArgs e)
         {
+            PlaceShipsForAiPalyer();
             StartBattle();
         }
 
-
-        class CellInfo
+        private void PlaceShipsForAiPalyer()
         {
-            public int Row { get; set; }
-            public int Column { get; set; }
-            public bool HasShip { get; set; }
-        }
-
-        public enum ShipDirection
-        {
-            Left,
-            Down,
-            Up,
-            Right
-        }
-
-        [Flags]
-        public enum AllowedDirections
-        {
-            None = 0,
-            Left = 1,
-            Down = 2,
-            Up = 4,
-            Right = 8
+            throw new NotImplementedException();
         }
     }
 }

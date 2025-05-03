@@ -109,7 +109,7 @@ namespace SeBattle2
                     if (sourceCellInfo != null && sourceCellInfo.HasShip)
                     {
                         ((CellInfo)targetCell.Tag).HasShip = true;
-                        targetCell.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/hit_icon.png")));
+                        targetCell.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/empty.png")));
                     }
                     if (sourceCellInfo.HasShip)
                     {
