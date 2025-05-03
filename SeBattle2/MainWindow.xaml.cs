@@ -317,7 +317,6 @@ namespace SeBattle2
             return 1;
         }
 
-
         private void UpdateLabelAndRadioButton()
         {
             if (ExtraLargeShipCheckBox.IsChecked == true)
@@ -449,8 +448,12 @@ namespace SeBattle2
             StartBattle();
         }
 
+
+
         private void PlaceShipsForAiPalyer()
         {
+        
+
             throw new NotImplementedException();
         }
     }
