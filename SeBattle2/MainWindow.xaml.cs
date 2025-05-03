@@ -595,6 +595,35 @@ namespace SeBattle2
             EnableLabelAndRadioButton(4, SmallShipLabel, SmallShipCheckBox);
         }
 
+        private bool AreAllShipsPlaced()
+        {
+            return !SmallShipCheckBox.IsEnabled &&
+                   !MediumShipCheckBox.IsEnabled &&
+                   !LargeShipCheckBox.IsEnabled &&
+                   !ExtraLargeShipCheckBox.IsEnabled;
+        }
+
+        private void StartBattle()
+        {
+            if (AreAllShipsPlaced())
+            {
+                var battleWindow = new BattleWindow(_cells);
+                battleWindow.Show();
+                this.Close();
+            }
+            else
+            {
+                MessageBox.Show("Please place all ships before starting the battle!");
+            }
+        }
+
+
+        private void StartBattleButton_Click(object sender, RoutedEventArgs e)
+        {
+            StartBattle();
+        }
+
+
         class CellInfo
         {
             public int Row { get; set; }

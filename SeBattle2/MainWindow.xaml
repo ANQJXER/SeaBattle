@@ -28,6 +28,14 @@
             
             <!-- Button to Clear Ships -->
             <Button x:Name="ClearShipsButton" Content="Clear Ships from Board" Click="ClearShipsButton_Click"/>
+
+            <Button x:Name="StartBattleButton" 
+        Content="Start Battle" 
+        Click="StartBattleButton_Click"
+        Width="222" 
+        Height="21" 
+        Margin="10"/>
+
         </StackPanel>
 
         <!-- Main Game Board Placeholder (Right Side) -->
