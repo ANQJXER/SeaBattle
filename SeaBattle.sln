@@ -3,9 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeaBattle", "SeaBattle\SeaBattle.csproj", "{9C4C7670-B775-48DF-BC91-23205A887AFD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeBattle2", "SeBattle2\SeBattle2.csproj", "{0038329C-EBD1-4B6D-AAA2-CFE2371928FE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeBattle", "SeBattle\SeBattle.csproj", "{BB0D1B46-29C8-7090-12B4-7649AB585852}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{9C4C7670-B775-48DF-BC91-23205A887AFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9C4C7670-B775-48DF-BC91-23205A887AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9C4C7670-B775-48DF-BC91-23205A887AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9C4C7670-B775-48DF-BC91-23205A887AFD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0038329C-EBD1-4B6D-AAA2-CFE2371928FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0038329C-EBD1-4B6D-AAA2-CFE2371928FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0038329C-EBD1-4B6D-AAA2-CFE2371928FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0038329C-EBD1-4B6D-AAA2-CFE2371928FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB0D1B46-29C8-7090-12B4-7649AB585852}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB0D1B46-29C8-7090-12B4-7649AB585852}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB0D1B46-29C8-7090-12B4-7649AB585852}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB0D1B46-29C8-7090-12B4-7649AB585852}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
