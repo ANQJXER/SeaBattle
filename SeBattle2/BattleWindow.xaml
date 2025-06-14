@@ -1,7 +1,7 @@
 ﻿<Window x:Class="SeBattle2.BattleWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Battle Mode" Height="600" Width="1000">
+        Title="Battle Mode" Height="auto" Width="auto">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -15,10 +15,9 @@
                        HorizontalAlignment="Center"
                        Margin="0,0,0,10"/>
             <Grid x:Name="PlayerGrid" 
-                  Height="400" 
-                  Width="400">
+                  Height="600" 
+                  Width="600">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
@@ -31,10 +30,9 @@
                        HorizontalAlignment="Center"
                        Margin="0,0,0,10"/>
             <Grid x:Name="EnemyGrid" 
-                  Height="400" 
-                  Width="400">
+                  Height="600" 
+                  Width="600">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
             </Grid>
