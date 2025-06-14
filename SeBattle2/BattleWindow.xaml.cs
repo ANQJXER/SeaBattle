@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using SeBattle2.Logic;
+using System.Dynamic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -14,125 +15,90 @@ namespace SeBattle2
     }
     public partial class BattleWindow : Window
     {
-        private Button[,] _playerCells = new Button[10, 10];
-        private Button[,] _enemyCells = new Button[10, 10];
+        private readonly Button[,] _playerCells;
+        private readonly Button[,] _enemyCells;
+        private readonly GameLogic _gameLogic;
 
-        public BattleWindow(Button[,] playerShips)
+        public BattleWindow(Button[,] playerCells)
         {
             InitializeComponent();
-            InitializeGrids();
-            CopyPlayerShips(playerShips);
+            _playerCells = playerCells;
+            
+            // Initialize enemy board
+            var aiGenerator = new AiShipBoardGenerator();
+            _enemyCells = aiGenerator.PlaceShips();
+            _gameLogic = new GameLogic(_enemyCells, playerCells);
+
+            InitializeBoards();
+            SetupGameEvents();
         }
 
-        private void InitializeGrids()
+        private void InitializeBoards()
         {
-            // Initialize both grids
-            InitializeGrid(PlayerGrid, _playerCells, false);
-            InitializeGrid(EnemyGrid, _enemyCells, true);
-        }
-
-        private void InitializeGrid(Grid grid, Button[,] cells, bool isEnemyGrid)
-        {
-            // Create columns and rows
-            for (int i = 0; i <= 10; i++)
+            // Setup player's grid
+            for (int i = 0; i < 10; i++)
             {
-                grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-                grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-            }
-
-            // Add column headers (A-J)
-            for (int col = 1; col <= 10; col++)
-            {
-                var header = new TextBlock
+                PlayerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                PlayerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                
+                for (int j = 0; j < 10; j++)
                 {
-                    Text = ((char)(64 + col)).ToString(),
-                    HorizontalAlignment = HorizontalAlignment.Center
-                };
-                Grid.SetRow(header, 0);
-                Grid.SetColumn(header, col);
-                grid.Children.Add(header);
-            }
-
-            // Add row headers (1-10)
-            for (int row = 1; row <= 10; row++)
-            {
-                var header = new TextBlock
-                {
-                    Text = row.ToString(),
-                    VerticalAlignment = VerticalAlignment.Center
-                };
-                Grid.SetRow(header, row);
-                Grid.SetColumn(header, 0);
-                grid.Children.Add(header);
-            }
-
-            // Create the buttons for the grid
-            for (int row = 0; row < 10; row++)
-            {
-                for (int col = 0; col < 10; col++)
-                {
-                    Button cell = new Button
+                    var playerCell = _playerCells[i, j];
+                    // Remove from current parent if exists
+                    if (playerCell.Parent is Panel parent)
                     {
-                        Tag = new CellInfo
-                        {
-                            Row = row,
-                            Column = col,
-                            HasShip = false
-                        }
-                    };
-
-                    if (isEnemyGrid)
-                    {
-                        cell.Click += EnemyCell_Click;
+                        parent.Children.Remove(playerCell);
                     }
+                    Grid.SetRow(playerCell, i);
+                    Grid.SetColumn(playerCell, j);
+                    PlayerGrid.Children.Add(playerCell);
+                }
+            }
 
-                    SetEmptyCellStyle(cell);
-
-                    cells[row, col] = cell;
-                    Grid.SetRow(cell, row + 1);
-                    Grid.SetColumn(cell, col + 1);
-                    grid.Children.Add(cell);
+            // Setup enemy's grid
+            for (int i = 0; i < 10; i++)
+            {
+                EnemyGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                EnemyGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                
+                for (int j = 0; j < 10; j++)
+                {
+                    var enemyCell = _enemyCells[i, j];
+                    enemyCell.Click += EnemyCell_Click;
+                    // Hide enemy ships
+                    enemyCell.Background = new ImageBrush(new BitmapImage(
+                        new Uri("pack://application:,,,/Images/empty.png")));
+                    Grid.SetRow(enemyCell, i);
+                    Grid.SetColumn(enemyCell, j);
+                    EnemyGrid.Children.Add(enemyCell);
                 }
             }
         }
 
-        private void CopyPlayerShips(Button[,] playerShips)
+        private void SetupGameEvents()
         {
-            for (int row = 0; row < 10; row++)
+            _gameLogic.OnHit += (s, e) => 
             {
-                for (int col = 0; col < 10; col++)
-                {
-                    var sourceCell = playerShips[row, col];
-                    var targetCell = _playerCells[row, col];
-                    var sourceCellInfo = sourceCell.Tag as CellInfo;
+                MessageBox.Show("Hit!", "Battle Result");
+            };
 
-                    if (sourceCellInfo != null && sourceCellInfo.HasShip)
-                    {
-                        ((CellInfo)targetCell.Tag).HasShip = true;
-                        targetCell.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/empty.png")));
-                    }
-                    if (sourceCellInfo.HasShip)
-                    {
-                        ((CellInfo)targetCell.Tag).HasShip = true;
-                        targetCell.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/hit_icon.png")));
-                    }
-                }
-            }
+            _gameLogic.OnMiss += (s, e) => 
+            {
+                MessageBox.Show("Miss!", "Battle Result");
+            };
+
+            _gameLogic.OnGameOver += (s, e) => 
+            {
+                MessageBox.Show("Congratulations! You've won the game!", "Game Over");
+                this.Close();
+            };
         }
 
         private void EnemyCell_Click(object sender, RoutedEventArgs e)
         {
-            var button = sender as Button;
-            // Here you would implement the shooting logic
-            // For now, we'll just mark it as a miss
-            button.Background = Brushes.Blue;
-        }
-
-        private static void SetEmptyCellStyle(Button button)
-        {
-            button.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/empty.png")));
-            button.BorderBrush = Brushes.Black;
-            button.BorderThickness = new Thickness(1);
+            var button = (Button)sender;
+            var cellInfo = (CellInfo)button.Tag;
+            _gameLogic.ProcessShot(cellInfo.Row, cellInfo.Column);
         }
     }
 }

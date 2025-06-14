@@ -1,4 +1,6 @@
-﻿using SeBattle2.Models;
+﻿
+
+using SeBattle2.Models;
 using System.Windows.Controls;
 
 namespace SeBattle2.Logic

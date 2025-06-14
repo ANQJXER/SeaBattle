@@ -5,5 +5,7 @@
         public int Row { get; set; }
         public int Column { get; set; }
         public bool HasShip { get; set; }
+        public bool IsHit { get; set; }
+        public int ShipId { get; set; }
     }
 }

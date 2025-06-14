@@ -441,20 +441,29 @@ namespace SeBattle2
             }
         }
 
-
         private void StartBattleButton_Click(object sender, RoutedEventArgs e)
         {
-            PlaceShipsForAiPalyer();
-            StartBattle();
+            if (AreAllShipsPlaced())
+            {
+                PlaceShipsForAiPalyer();
+            }
+            else
+            {
+                MessageBox.Show("Please place all ships before starting the battle!");
+            }
         }
-
-
 
         private void PlaceShipsForAiPalyer()
         {
-        
+            var aiGenerator = new AiShipBoardGenerator();
+            var aiBoard = aiGenerator.PlaceShips();
 
-            throw new NotImplementedException();
+            // This method is called before opening the BattleWindow,
+            // so we need to pass both the player's ships (_cells) 
+            // and the AI's ships (aiBoard) to the BattleWindow
+            var battleWindow = new BattleWindow(_cells);
+            battleWindow.Show();
+            this.Close();
         }
     }
 }
