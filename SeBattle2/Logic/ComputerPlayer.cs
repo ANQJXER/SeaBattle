@@ -24,22 +24,26 @@ namespace SeBattle2.Logic
 
         public void TakeTurn()
         {
-            (int x, int y) target;
-
-            if (_potentialTargets.Count > 0)
+            do
             {
-                // Try cells around last hit
-                int index = _random.Next(_potentialTargets.Count);
-                target = _potentialTargets[index];
-                _potentialTargets.RemoveAt(index);
-            }
-            else
-            {
-                // Random shot
-                target = GetRandomTarget();
-            }
+                (int x, int y) target;
 
-            ProcessShot(target.x, target.y);
+                if (_potentialTargets.Count > 0)
+                {
+                    // Try cells around last hit
+                    int index = _random.Next(_potentialTargets.Count);
+                    target = _potentialTargets[index];
+                    _potentialTargets.RemoveAt(index);
+                }
+                else
+                {
+                    // Random shot
+                    target = GetRandomTarget();
+                }
+
+                ProcessShot(target.x, target.y);
+            } 
+            while (_lastHit != null);
         }
 
         private void ProcessShot(int x, int y)

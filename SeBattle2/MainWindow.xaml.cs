@@ -64,18 +64,6 @@ namespace SeBattle2
             _shipPlacementChecker = new ShipPlacementChecker(_cells);
         }
 
-        private void CellButton_MouseEnter(object sender, MouseEventArgs e)
-        {
-            var button = sender as Button;
-            button.Background = Brushes.LightGray; // Highlight cell on hover
-        }
-
-        private bool HasCellShip(int row, int col)
-        {
-            var cellInfo = _cells[row, col].Tag as CellInfo;
-            return cellInfo.HasShip;
-        }
-
         private void CellButton_Click(object sender, RoutedEventArgs e)
         {
             if (_isPlacingShipMode)
@@ -189,8 +177,8 @@ namespace SeBattle2
         private static void PlaceShip(Button button)
         {
             ((CellInfo)button.Tag).HasShip = true;
-            button.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/hit_icon.png")));
-            button.BorderBrush = Brushes.Red;
+            button.Background = new ImageBrush(new BitmapImage(new Uri("pack://application:,,,/Images/ship_icon.png")));
+            button.BorderBrush = Brushes.Green;
             button.BorderThickness = new Thickness(5);
         }
 

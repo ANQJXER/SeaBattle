@@ -38,8 +38,8 @@ namespace SeBattle2
             // Setup player's grid
             for (int i = 0; i < 10; i++)
             {
-                PlayerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-                PlayerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                PlayerGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50, GridUnitType.Pixel) });
+                PlayerGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50, GridUnitType.Pixel) });
                 
                 for (int j = 0; j < 10; j++)
                 {
@@ -58,8 +58,8 @@ namespace SeBattle2
             // Setup enemy's grid
             for (int i = 0; i < 10; i++)
             {
-                EnemyGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-                EnemyGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+                EnemyGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(50, GridUnitType.Pixel) });
+                EnemyGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50, GridUnitType.Pixel) });
                 
                 for (int j = 0; j < 10; j++)
                 {

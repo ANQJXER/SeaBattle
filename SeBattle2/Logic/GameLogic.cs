@@ -44,6 +44,7 @@ public class GameLogic
             // Hit
             _enemyCells[x, y].Background = new ImageBrush(new BitmapImage(
                 new Uri("pack://application:,,,/Images/hit_icon.png")));
+            _enemyCells[x, y].BorderBrush = Brushes.Red;
             OnHit?.Invoke(this, new GameEventArgs { X = x, Y = y });
             
             if (CheckForGameOver(_enemyCells))
@@ -52,16 +53,19 @@ public class GameLogic
                 OnGameOver?.Invoke(this, EventArgs.Empty);
                 return;
             }
+
+            return;
         }
         else
         {
             // Miss
             _enemyCells[x, y].Background = new ImageBrush(new BitmapImage(
                 new Uri("pack://application:,,,/Images/missed_icon.png")));
+            _enemyCells[x, y].BorderBrush = Brushes.Yellow;
             OnMiss?.Invoke(this, new GameEventArgs { X = x, Y = y });
         }
 
-        _enemyCells[x, y].IsEnabled = false;
+        //_enemyCells[x, y].IsEnabled = false;
         
         // Switch to computer's turn
         _isPlayerTurn = false;
@@ -79,6 +83,7 @@ public class GameLogic
         {
             _playerCells[e.X, e.Y].Background = new ImageBrush(new BitmapImage(
                 new Uri("pack://application:,,,/Images/hit_icon.png")));
+            _playerCells[e.X, e.Y].BorderBrush = Brushes.Red;
 
             if (CheckForGameOver(_playerCells))
             {
@@ -86,14 +91,17 @@ public class GameLogic
                 OnGameOver?.Invoke(this, EventArgs.Empty);
                 return;
             }
+
+            return;
         }
         else
         {
             _playerCells[e.X, e.Y].Background = new ImageBrush(new BitmapImage(
                 new Uri("pack://application:,,,/Images/missed_icon.png")));
+            _playerCells[e.X, e.Y].BorderBrush = Brushes.LightYellow;
+
         }
 
-        _playerCells[e.X, e.Y].IsEnabled = false;
         _isPlayerTurn = true; // Switch back to player's turn
     }
 
