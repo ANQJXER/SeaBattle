@@ -455,12 +455,6 @@ namespace SeBattle2
 
         private void PlaceShipsForAiPalyer()
         {
-            var aiGenerator = new AiShipBoardGenerator();
-            var aiBoard = aiGenerator.PlaceShips();
-
-            // This method is called before opening the BattleWindow,
-            // so we need to pass both the player's ships (_cells) 
-            // and the AI's ships (aiBoard) to the BattleWindow
             var battleWindow = new BattleWindow(_cells);
             battleWindow.Show();
             this.Close();

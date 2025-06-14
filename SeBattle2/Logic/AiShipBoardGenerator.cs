@@ -106,15 +106,4 @@ namespace SeBattle2.Logic
             }
         }
     }
-
-    internal class GameLogic
-    {
-        private Button[,] _enemyCells;
-
-        public void InitializeEnemyBoard()
-        {
-            var aiGenerator = new AiShipBoardGenerator();
-            _enemyCells = aiGenerator.PlaceShips();
-        }
-    }
 }
